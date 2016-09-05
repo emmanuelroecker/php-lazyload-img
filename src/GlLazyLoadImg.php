@@ -33,13 +33,39 @@ class GlLazyLoadImg
     private $rootpath;
 
     /**
+     * @var int
+     */
+    private $type;
+
+
+    /**
+     * @var string
+     */
+    private $moveToAttribute;
+
+    /**
+     * @var array
+     */
+    private $excludeAttributesList;
+    
+    /**
      * constructor - set root directory to relative url
      *
      * @param string $rootpath
+     * @param int    $type
+     * @param string $moveToAttribute
+     * @param array  $excludeAttributesList
      */
-    public function __construct($rootpath)
-    {
+    public function __construct(
+        $rootpath,
+        $type = self::BLANK,
+        $moveToAttribute = 'data-original',
+        array $excludeAttributesList = []
+    ) {
         $this->rootpath = $rootpath;
+        $this->type = $type;
+        $this->moveToAttribute = $moveToAttribute;
+        $this->excludeAttributesList = $excludeAttributesList;
     }
 
     /**
@@ -98,24 +124,17 @@ class GlLazyLoadImg
 
         return ('data:' . $mime . ';base64,' . $base64);
     }
-   
+
     /**
      * replace all src attributes from img tags with datauri and set another attribute with old src value
      * support jpeg, png or gif file format
      *
      * @param string $html
-     * @param int    $type                  (self::BLANK=0 or self::LOSSY=1)
-     * @param string $moveToAttribute       move src value to $attribute (default = data-original)
-     * @param array  $excludeAttributesList list of attributes to excludes
      *
      * @throws \Exception
+     * @return string
      */
-    public function autoDataURI(
-        $html,
-        $type = self::BLANK,
-        $moveToAttribute = 'data-original',
-        array $excludeAttributesList = []
-    ) {
+    public function autoDataURI($html) {
         $html = new GlHtml($html);
         $imgs = $html->get('img');
         foreach ($imgs as $img) {
@@ -131,7 +150,7 @@ class GlLazyLoadImg
             }
 
             if ($imgbin) {
-                switch ($type) {
+                switch ($this->type) {
                     case self::BLANK:
                         $datauri = $this->getBlankDataURI($imgbin);
                         break;
@@ -139,27 +158,26 @@ class GlLazyLoadImg
                         $datauri = $this->getLossyDataURI($imgbin);
                         break;
                     default:
-                        throw new \Exception("Type unknown (only self::BLANK=0 or self::LOSSY=1 accepted) : " . $type);
+                        throw new \Exception("Type unknown (only self::BLANK=0 or self::LOSSY=1 accepted) : " . $this->type);
                 }
 
-                
-                if (!$img->hasAttributes($excludeAttributesList)) {
-                    $img->setAttributes([$moveToAttribute => $src, 'src' => $datauri]);
+
+                if (!$img->hasAttributes($this->excludeAttributesList)) {
+                    $img->setAttributes([$this->moveToAttribute => $src, 'src' => $datauri]);
                 }
             }
         }
-        
+
         return $html->html();
     }
 
     /**
      * @param string $html
-     * @param array  $excludeAttributesList
-     * 
+     *
      * @throws \Exception
      * @return string
      */
-    public function autoWidthHeight($html,array $excludeAttributesList = [])
+    public function autoWidthHeight($html)
     {
         $html = new GlHtml($html);
         $imgs = $html->get('img');
@@ -179,7 +197,7 @@ class GlLazyLoadImg
                 imagedestroy($imgbin);
                 $img->setAttributes(['width' => $width, 'height' => $height]);
 
-                if (!$img->hasAttributes($excludeAttributesList)) {
+                if (!$img->hasAttributes($this->excludeAttributesList)) {
                     $img->setAttributes(['data-original' => $src, 'src' => '#']);
                 }
             }
