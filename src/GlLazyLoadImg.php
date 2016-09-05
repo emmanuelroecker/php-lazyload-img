@@ -125,6 +125,36 @@ class GlLazyLoadImg
         return ('data:' . $mime . ';base64,' . $base64);
     }
 
+
+    /**
+     * find type of image and open it
+     * 
+     * @param string $file
+     *
+     * @return bool|resource
+     */
+    private function openImage ($file) {
+        if (!file_exists($file))
+            return false;
+
+        $size = getimagesize($file);
+        switch($size["mime"]){
+            case "image/jpeg":
+                $im = imagecreatefromjpeg($file); 
+                break;
+            case "image/gif":
+                $im = imagecreatefromgif($file); 
+                break;
+            case "image/png":
+                $im = imagecreatefrompng($file); 
+                break;
+            default:
+                $im=false;
+                break;
+        }
+        return $im;
+    }
+    
     /**
      * replace all src attributes from img tags with datauri and set another attribute with old src value
      * support jpeg, png or gif file format
@@ -141,14 +171,7 @@ class GlLazyLoadImg
             $src          = $img->getAttribute('src');
             $pathimagesrc = $this->rootpath . '/' . $src;
 
-            $imgbin = @imagecreatefromjpeg($pathimagesrc);
-            if (!$imgbin) {
-                $imgbin = @imagecreatefrompng($pathimagesrc);
-                if (!$imgbin) {
-                    $imgbin = @imagecreatefromgif($pathimagesrc);
-                }
-            }
-
+            $imgbin = $this->openImage($pathimagesrc);
             if ($imgbin) {
                 switch ($this->type) {
                     case self::BLANK:
@@ -184,13 +207,8 @@ class GlLazyLoadImg
         foreach ($imgs as $img) {
             $src          = $img->getAttribute('src');
             $pathimagesrc = $this->rootpath . '/' . $src;
-            $imgbin       = @imagecreatefromjpeg($pathimagesrc);
-            if (!$imgbin) {
-                $imgbin = @imagecreatefrompng($pathimagesrc);
-                if (!$imgbin) {
-                    $imgbin = @imagecreatefromgif($pathimagesrc);
-                }
-            }
+            
+            $imgbin = $this->openImage($pathimagesrc);
             if ($imgbin) {
                 $width  = imagesx($imgbin);
                 $height = imagesy($imgbin);
