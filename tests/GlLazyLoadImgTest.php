@@ -103,4 +103,20 @@ class GlLazyLoadImgTest extends \PHPUnit_Framework_TestCase
 
         $this->assertFileEquals($fileexpected, $fileresult);
     }
+    
+    public function testAutoWidthHeightFilter()
+    {
+        $html = '<!DOCTYPE html><html><head></head><body><div><img src="img/test1.jpg"><img src="img/test1.jpg" nolazyload></div></body></html>';
+
+        $lazyload = new GlLazyLoadImg(__DIR__,GlLazyLoadImg::BLANK, 'data-original', ['nolazyload']);
+
+        $result = $lazyload->autoWidthHeight($html);
+
+        $fileresult   = __DIR__ . '/result/autowidthheightfilter.html';
+        $fileexpected = __DIR__ . '/expected/autowidthheightfilter.html';
+
+        file_put_contents($fileresult, $result);
+
+        $this->assertFileEquals($fileexpected, $fileresult);
+    }
 }
