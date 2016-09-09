@@ -17,7 +17,7 @@ Set width and height attributes to all <img> tags in html
 ```php
 $html = '<!DOCTYPE html><html><head></head><body><div><img src="img/test1.jpg"></div></body></html>';
 
-$lazyload = new GlLazyLoadImg(__DIR__); //root directory for relative url
+$lazyload = new GlLazyLoadImg(__DIR__); //root directory parameter for relative url
 
 $result = $lazyload->autoWidthHeight($html);
 ```
@@ -44,7 +44,7 @@ Add blank image with same size in data:uri attributes to all <img> tags in html
 ```php
 $html = '<!DOCTYPE html><html><head></head><body><div><img src="img/test1.jpg"></div></body></html>';
 
-$lazyload = new GlLazyLoadImg(__DIR__);
+$lazyload = new GlLazyLoadImg(__DIR__); //root directory parameter for relative url
 
 $result = $lazyload->autoDataURI($html);
 ```
@@ -71,7 +71,7 @@ Add jpeg lossy image in data:uri attributes to all <img> tags in html
 ```php
 $html = '<!DOCTYPE html><html><head></head><body><div><img src="img/test1.jpg"></div></body></html>';
 
-$lazyload = new GlLazyLoadImg(__DIR__);
+$lazyload = new GlLazyLoadImg(__DIR__); //root directory parameter for relative url
 
 $result = $lazyload->autoDataURI($html, GlLazyLoadImg::LOSSY);
 ```
