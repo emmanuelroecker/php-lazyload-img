@@ -188,6 +188,7 @@ class GlLazyLoadImg
                 if (!$img->hasAttributes($this->excludeAttributesList)) {
                     $img->setAttributes([$this->moveToAttribute => $src, 'src' => $datauri]);
                 }
+                imagedestroy($imgbin);
             }
         }
 
@@ -212,12 +213,12 @@ class GlLazyLoadImg
             if ($imgbin) {
                 $width  = imagesx($imgbin);
                 $height = imagesy($imgbin);
-                imagedestroy($imgbin);
                 $img->setAttributes(['width' => $width, 'height' => $height]);
 
                 if (!$img->hasAttributes($this->excludeAttributesList)) {
                     $img->setAttributes(['data-original' => $src, 'src' => '#']);
                 }
+                imagedestroy($imgbin);
             }
         }
 
