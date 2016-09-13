@@ -47,7 +47,7 @@ class GlLazyLoadImg
      * @var array
      */
     private $excludeAttributesList;
-    
+
     /**
      * constructor - set root directory to relative url
      *
@@ -62,32 +62,52 @@ class GlLazyLoadImg
         $moveToAttribute = 'data-original',
         array $excludeAttributesList = []
     ) {
-        $this->rootpath = $rootpath;
-        $this->type = $type;
-        $this->moveToAttribute = $moveToAttribute;
+        $this->rootpath              = $rootpath;
+        $this->type                  = $type;
+        $this->moveToAttribute       = $moveToAttribute;
         $this->excludeAttributesList = $excludeAttributesList;
     }
 
+    
+    private function gcd($a,$b) {
+         return ($a % $b) ? $this->gcd($b,$a % $b) : $b;
+    }
+    
     /**
      * create lossy image and encode to data uri format
      * minimal size is jpeg
      *
      * @param     $src          resource GD library
      * @param int $quality      jpeg quality from 0 (poor quality) to 100 (best quality) - default 0
-     *
+     * @param bool $minsize     rescale to min size (default true)
      * @return string
      */
-    public function getLossyDataURI($src, $quality = 0)
+    public function getLossyDataURI($src, $quality = 0, $minsize = true)
     {
+        if ($minsize) {
+            $width  = imagesx($src);
+            $height = imagesy($src);
+
+            $gcd    = $this->gcd($width, $height);
+            $width  = $width / $gcd;
+            $height = $height / $gcd;
+            
+            $src = imagescale($src,$width,$height,IMG_NEAREST_NEIGHBOUR);
+        }
+        
         ob_start();
         imagejpeg($src, null, $quality);
         $data = ob_get_contents();
         ob_end_clean();
 
+        if ($minsize) {
+            imagedestroy($src);
+        }
+        
         $base64 = base64_encode($data);
 
         $mime = 'image/jpeg';
-
+      
         return ('data:' . $mime . ';base64,' . $base64);
     }
 
@@ -95,18 +115,25 @@ class GlLazyLoadImg
      * create blank image with same size in data uri format
      * minimal size is gif
      *
-     * @param     $src          resource GD library
-     * @param int $red          red component background color (default 255)
-     * @param int $green        green component background color (default 255)
-     * @param int $blue         blue component background color (default 255)
+     * @param      $src          resource GD library
+     * @param int  $red          red component background color (default 255)
+     * @param int  $green        green component background color (default 255)
+     * @param int  $blue         blue component background color (default 255)
+     * @param bool $minsize      rescale to min size (default true)
      *
      * @return string
      */
-    public function getBlankDataURI($src, $red = 255, $green = 255, $blue = 255)
+    public function getBlankDataURI($src, $red = 255, $green = 255, $blue = 255, $minsize = true)
     {
         $width  = imagesx($src);
         $height = imagesy($src);
 
+        if ($minsize) {
+            $gcd    = $this->gcd($width, $height);
+            $width  = $width / $gcd;
+            $height = $height / $gcd;
+        }
+        
         $img   = imagecreatetruecolor($width, $height);
         $bgcol = imagecolorallocate($img, $red, $green, $blue);
         imageFill($img, 0, 0, $bgcol);
@@ -128,43 +155,48 @@ class GlLazyLoadImg
 
     /**
      * find type of image and open it
-     * 
+     *
      * @param string $file
      *
      * @return bool|resource
      */
-    private function openImage ($file) {
-        if (!file_exists($file))
+    private function openImage($file)
+    {
+        if (!file_exists($file)) {
             return false;
+        }
 
         $size = getimagesize($file);
-        switch($size["mime"]){
+        switch ($size["mime"]) {
             case "image/jpeg":
-                $im = imagecreatefromjpeg($file); 
+                $im = imagecreatefromjpeg($file);
                 break;
             case "image/gif":
-                $im = imagecreatefromgif($file); 
+                $im = imagecreatefromgif($file);
                 break;
             case "image/png":
-                $im = imagecreatefrompng($file); 
+                $im = imagecreatefrompng($file);
                 break;
             default:
-                $im=false;
+                $im = false;
                 break;
         }
+
         return $im;
     }
-    
+
     /**
      * replace all src attributes from img tags with datauri and set another attribute with old src value
      * support jpeg, png or gif file format
      *
      * @param string $html
-     *
+     * @param bool   $minsize  rescale to minsize (default true)
+     * 
      * @throws \Exception
      * @return string
      */
-    public function autoDataURI($html) {
+    public function autoDataURI($html, $minsize=true)
+    {
         $html = new GlHtml($html);
         $imgs = $html->get('img');
         foreach ($imgs as $img) {
@@ -184,6 +216,12 @@ class GlLazyLoadImg
                         throw new \Exception("Type unknown (only self::BLANK=0 or self::LOSSY=1 accepted) : " . $this->type);
                 }
 
+                if ($minsize) {
+                    // keep original size
+                    $width  = imagesx($imgbin);
+                    $height = imagesy($imgbin);
+                    $img->setAttributes(['width' => $width, 'height' => $height]);
+                }
 
                 if (!$img->hasAttributes($this->excludeAttributesList)) {
                     $img->setAttributes([$this->moveToAttribute => $src, 'src' => $datauri]);
@@ -208,7 +246,7 @@ class GlLazyLoadImg
         foreach ($imgs as $img) {
             $src          = $img->getAttribute('src');
             $pathimagesrc = $this->rootpath . '/' . $src;
-            
+
             $imgbin = $this->openImage($pathimagesrc);
             if ($imgbin) {
                 $width  = imagesx($imgbin);

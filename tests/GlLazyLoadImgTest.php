@@ -29,7 +29,7 @@ class GlLazyLoadImgTest extends \PHPUnit_Framework_TestCase
 {   
     public function testBlankDataURI()
     {
-        $expected = 'data:image/gif;base64,R0lGODdhAAEAAYAAAPz+/AAAACwAAAAAAAEAAQAC/oSPqcvtD6OctNqLs968+w+G4kiW5omm6sq27gvH8kzX9o3n+s73/g8MCofEovGITCqXzKbzCY1Kp9Sq9YrNarfcrvcLDovH5LL5jE6r1+y2+w2Py+f0uv2Oz+v3/L7/DxgoOEhYaHiImKi4yNjo+AgZKTlJWWl5iZmpucnZ6fkJGio6SlpqeoqaqrrK2ur6ChsrO0tba3uLm6u7y9vr+wscLDxMXGx8jJysvMzc7PwMHS09TV1tfY2drb3N3e39DR4uPk5ebn6Onq6+zt7u/g4fLz9PX29/j5+vv8/f7/8PMKDAgQQLGjyIMKHChQwbOnwIMaLEiRQrWryIMaPGYI0cO3r8CDKkyJEkS5o8iTKlypUsW7p8CTOmzJk0a9q8iTOnzp08e/r8CTSo0KFEixo9ijSp0qVMmzp9CjWq1KlUq1q9ijWr1q1cu3r9Cjas2LFky5o9izat2rVs2x4rAAA7';
+        $expected = 'data:image/gif;base64,R0lGODdhAQABAIAAAPz+/AAAACwAAAAAAQABAAACAkQBADs=';
 
         $lazyload = new GlLazyLoadImg(__DIR__);
 
