@@ -39,10 +39,10 @@ class GlLazyLoadImgTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals($expected, $datauri);
     }
 
-    /*
+    
     public function testLossyDataURI()
     { 
-        $lazyload = new GlLazyLoadImg(__DIR__);
+        $lazyload = new GlLazyLoadImg(__DIR__,GlLazyLoadImg::LOSSY);
 
         $expected = file_get_contents(__DIR__ . '/expected/lossydatauri.data');
         
@@ -51,7 +51,7 @@ class GlLazyLoadImgTest extends \PHPUnit_Framework_TestCase
 
         $this->assertEquals($expected, $datauri);
     }
-    */
+    
 
     public function testAutoDataURIBlank()
     {
@@ -69,14 +69,14 @@ class GlLazyLoadImgTest extends \PHPUnit_Framework_TestCase
         $this->assertFileEquals($fileexpected, $fileresult);
     }
 
-    /*
+    
     public function testAutoDataURILossy()
     {
         $html = '<!DOCTYPE html><html><head></head><body><div><img src="img/test1.jpg"></div></body></html>';
 
-        $lazyload = new GlLazyLoadImg(__DIR__);
+        $lazyload = new GlLazyLoadImg(__DIR__,GlLazyLoadImg::LOSSY);
 
-        $result = $lazyload->autoDataURI($html, GlLazyLoadImg::LOSSY);
+        $result = $lazyload->autoDataURI($html);
 
         $fileresult   = __DIR__ . '/result/autodataurilossy.html';
         $fileexpected = __DIR__ . '/expected/autodataurilossy.html';
@@ -86,7 +86,7 @@ class GlLazyLoadImgTest extends \PHPUnit_Framework_TestCase
 
         $this->assertFileEquals($fileexpected, $fileresult);
     }
-    */
+    
 
     public function testAutoWidthHeight()
     {

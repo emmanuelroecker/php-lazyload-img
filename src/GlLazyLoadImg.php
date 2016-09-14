@@ -78,35 +78,24 @@ class GlLazyLoadImg
      * minimal size is jpeg
      *
      * @param     $src          resource GD library
-     * @param int $quality      jpeg quality from 0 (poor quality) to 100 (best quality) - default 0
-     * @param bool $minsize     rescale to min size (default true)
-     * @return string
+     * @param int $minwidth     min width in pixels (height autocalculte)
+     *                          
+     * @return string           data uri format
      */
-    public function getLossyDataURI($src, $quality = 0, $minsize = true)
-    {
-        if ($minsize) {
-            $width  = imagesx($src);
-            $height = imagesy($src);
-
-            $gcd    = $this->gcd($width, $height);
-            $width  = $width / $gcd;
-            $height = $height / $gcd;
-            
-            $src = imagescale($src,$width,$height,IMG_NEAREST_NEIGHBOUR);
-        }
+    public function getLossyDataURI($src, $minwidth = 75)
+    {            
+        $src = imagescale($src,$minwidth,-1,IMG_NEAREST_NEIGHBOUR);
         
         ob_start();
-        imagejpeg($src, null, $quality);
+        imagegif($src);
         $data = ob_get_contents();
         ob_end_clean();
 
-        if ($minsize) {
-            imagedestroy($src);
-        }
+        imagedestroy($src);
         
         $base64 = base64_encode($data);
 
-        $mime = 'image/jpeg';
+        $mime = 'image/gif';
       
         return ('data:' . $mime . ';base64,' . $base64);
     }
@@ -121,7 +110,7 @@ class GlLazyLoadImg
      * @param int  $blue         blue component background color (default 255)
      * @param bool $minsize      rescale to min size (default true)
      *
-     * @return string
+     * @return string            data uri format
      */
     public function getBlankDataURI($src, $red = 255, $green = 255, $blue = 255, $minsize = true)
     {
