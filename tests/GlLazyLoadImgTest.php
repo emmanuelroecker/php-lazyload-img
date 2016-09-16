@@ -32,7 +32,8 @@ class GlLazyLoadImgTest extends \PHPUnit_Framework_TestCase
 
         $lazyload = new GlLazyLoadImg(__DIR__);
 
-        $datauri = $lazyload->get1x1GifDataURI();
+        $imgbin  = @imagecreatefromjpeg(__DIR__ . '/img/test1.jpg');
+        $datauri = $lazyload->getMinGifDataURI($imgbin);
 
         $this->assertEquals($expected, $datauri);
     }

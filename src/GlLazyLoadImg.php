@@ -55,8 +55,6 @@ class GlLazyLoadImg
      * @param int    $type
      * @param string $moveToAttribute
      * @param array  $excludeAttributesList
-     *
-     * @throws \Exception
      */
     public function __construct(
         $rootpath,
@@ -64,22 +62,17 @@ class GlLazyLoadImg
         $moveToAttribute = 'data-original',
         array $excludeAttributesList = []
     ) {
-        switch ($type) {
-            case self::BLANK:
-                $this->datauri = $this->get1x1GifDataURI();
-                break;
-            case self::LOSSY:
-                $this->datauri = null;
-                break;
-            default:
-                throw new \Exception("Type unknown (only self::BLANK=0 or self::LOSSY=1 accepted) : " . $type);
-        }
-        
         $this->rootpath              = $rootpath;
+        $this->type                  = $type;
         $this->moveToAttribute       = $moveToAttribute;
         $this->excludeAttributesList = $excludeAttributesList;
     }
 
+    
+    private function gcd($a,$b) {
+         return ($a % $b) ? $this->gcd($b,$a % $b) : $b;
+    }
+    
     /**
      * create lossy gif image and encode to data uri format
      * minimal size is jpeg
@@ -117,9 +110,16 @@ class GlLazyLoadImg
      *
      * @return string            data uri format
      */
-    public function get1x1GifDataURI($red = 255, $green = 255, $blue = 255)
+    public function getMinGifDataURI($src, $red = 255, $green = 255, $blue = 255, $minsize = true)
     {
-        $img   = imagecreatetruecolor(1, 1);
+        $width  = imagesx($src);
+        $height = imagesy($src);
+
+        $gcd    = $this->gcd($width, $height);
+        $width  = $width / $gcd;
+        $height = $height / $gcd;
+            
+        $img   = imagecreatetruecolor($width, $height);
         $bgcol = imagecolorallocate($img, $red, $green, $blue);
         imageFill($img, 0, 0, $bgcol);
 
@@ -189,10 +189,15 @@ class GlLazyLoadImg
 
             $imgbin = $this->openImage($pathimagesrc);
             if ($imgbin) {
-                if ($this->datauri == null) {
-                    $datauri = $this->getLossyGifDataURI($imgbin);
-                } else {
-                    $datauri = $this->datauri;
+                switch ($this->type) {
+                    case self::BLANK:
+                        $datauri = $this->getMinGifDataURI($imgbin);
+                        break;
+                    case self::LOSSY:
+                        $datauri = $this->getLossyGifDataURI($imgbin);
+                        break;
+                    default:
+                        throw new \Exception("Type unknown (only self::BLANK=0 or self::LOSSY=1 accepted) : " . $this->type);
                 }
 
                 $width  = imagesx($imgbin);
