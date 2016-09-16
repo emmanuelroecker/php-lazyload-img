@@ -35,12 +35,6 @@ class GlLazyLoadImg
     /**
      * @var string
      */
-    private $datauri;
-
-
-    /**
-     * @var string
-     */
     private $moveToAttribute;
 
     /**
@@ -104,13 +98,14 @@ class GlLazyLoadImg
      * create blank image with same size in data uri format
      * minimal size is gif
      *
+     * @param     $src
      * @param int $red   red component background color (default 255)
      * @param int $green green component background color (default 255)
      * @param int $blue  blue component background color (default 255)
      *
      * @return string            data uri format
      */
-    public function getMinGifDataURI($src, $red = 255, $green = 255, $blue = 255, $minsize = true)
+    public function getMinGifDataURI($src, $red = 255, $green = 255, $blue = 255)
     {
         $width  = imagesx($src);
         $height = imagesy($src);
