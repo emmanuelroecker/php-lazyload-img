@@ -10,36 +10,11 @@ Lazy loading images with data:uri
 
 ## Server side with PHP
 
-### Setting width and height
+### Using a blank image and set width/height
 
-Set width and height attributes to all <img> tags in html
-
-```php
-$html = '<!DOCTYPE html><html><head></head><body><div><img src="img/test1.jpg"></div></body></html>';
-
-$lazyload = new GlLazyLoadImg(__DIR__); //root directory parameter for relative url
-
-$result = $lazyload->autoWidthHeight($html);
-```
-
-$result contain :
-
-```html
-<!DOCTYPE html>
-<html>
-    <head>
-    </head>
-    <body>
-        <div>
-            <img src="#" width="256" height="256" data-original="img/test1.jpg">
-        </div>
-    </body>
-</html>
-```
-
-### Using a blank image
-
-Add maximum reduced gif blank image in data:uri attribute to all <img> tags in html
+* Add 1x1 gif blank image in data:uri attribute to all <img> tags in html
+* Set width and height attributes with original image size
+* Browser is going to rescale automatically with width/height attribute
 
 ```php
 $html = '<!DOCTYPE html><html><head></head><body><div><img src="img/test1.jpg"></div></body></html>';
@@ -64,10 +39,11 @@ $result contain :
 </html>
 ```
 
-### Using a lossy image
+### Using a lossy image and set width/height
 
-Add reduced gif image in data:uri attribute to all <img> tags in html,
-browser rescale automaticaly with width/height attribute
+* Add reduced gif image in data:uri attribute to all <img> tags in html
+* Set width and height attributes with original image size
+* Browser is going to rescale automatically with width/height attribute
 
 ```php
 $html = '<!DOCTYPE html><html><head></head><body><div><img src="img/test1.jpg"></div></body></html>';

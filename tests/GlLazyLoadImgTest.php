@@ -27,32 +27,32 @@ use Symfony\Component\Finder\Finder;
  */
 class GlLazyLoadImgTest extends \PHPUnit_Framework_TestCase
 {   
-    public function testBlankDataURI()
+    public function test1x1GifDataURI()
     {
         $expected = 'data:image/gif;base64,R0lGODdhAQABAIAAAPz+/AAAACwAAAAAAQABAAACAkQBADs=';
 
         $lazyload = new GlLazyLoadImg(__DIR__);
 
         $imgbin  = @imagecreatefromjpeg(__DIR__ . '/img/test1.jpg');
-        $datauri = $lazyload->getBlankDataURI($imgbin);
+        $datauri = $lazyload->get1x1GifDataURI();
 
         $this->assertEquals($expected, $datauri);
     }
 
     
-    public function testLossyDataURI()
+    public function testLossyGifDataURI()
     { 
         $lazyload = new GlLazyLoadImg(__DIR__,GlLazyLoadImg::LOSSY);
 
         $expected = file_get_contents(__DIR__ . '/expected/lossydatauri.data');
         
         $imgbin  = @imagecreatefromjpeg(__DIR__ . '/img/test1.jpg');
-        $datauri = $lazyload->getLossyDataURI($imgbin,100);
+        $datauri = $lazyload->getLossyGifDataURI($imgbin);
 
         $percent = 0;
         similar_text($expected, $datauri, $percent);
         
-        $this->assertGreaterThan(95, $percent);
+        $this->assertGreaterThan(95, $percent, $datauri);
     }
     
 
@@ -91,22 +91,6 @@ class GlLazyLoadImgTest extends \PHPUnit_Framework_TestCase
         $this->assertGreaterThan(95,$percent);        
     }
     
-
-    public function testAutoWidthHeight()
-    {
-        $html = '<!DOCTYPE html><html><head></head><body><div><img src="img/test1.jpg"></div></body></html>';
-
-        $lazyload = new GlLazyLoadImg(__DIR__);
-
-        $result = $lazyload->autoWidthHeight($html);
-
-        $fileresult   = __DIR__ . '/result/autowidthheight.html';
-        $fileexpected = __DIR__ . '/expected/autowidthheight.html';
-
-        file_put_contents($fileresult, $result);
-
-        $this->assertFileEquals($fileexpected, $fileresult);
-    }
     
     public function testAutoWidthHeightFilter()
     {
@@ -114,10 +98,10 @@ class GlLazyLoadImgTest extends \PHPUnit_Framework_TestCase
 
         $lazyload = new GlLazyLoadImg(__DIR__,GlLazyLoadImg::BLANK, 'data-original', ['nolazyload']);
 
-        $result = $lazyload->autoWidthHeight($html);
+        $result = $lazyload->autoDataURI($html);
 
-        $fileresult   = __DIR__ . '/result/autowidthheightfilter.html';
-        $fileexpected = __DIR__ . '/expected/autowidthheightfilter.html';
+        $fileresult   = __DIR__ . '/result/autodataurifilter.html';
+        $fileexpected = __DIR__ . '/expected/autodataurifilter.html';
 
         file_put_contents($fileresult, $result);
 
