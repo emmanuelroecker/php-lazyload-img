@@ -49,6 +49,10 @@ class GlLazyLoadImgTest extends \PHPUnit_Framework_TestCase
         $imgbin  = @imagecreatefromjpeg(__DIR__ . '/img/test1.jpg');
         $datauri = $lazyload->getLossyDataURI($imgbin,100);
 
+        $percent = 0;
+        similar_text($expected, $datauri, $percent);
+        
+        $this->assertGreaterThan(95, $percent);
         $this->assertEquals($expected, $datauri);
     }
     
@@ -78,13 +82,14 @@ class GlLazyLoadImgTest extends \PHPUnit_Framework_TestCase
 
         $result = $lazyload->autoDataURI($html);
 
-        $fileresult   = __DIR__ . '/result/autodataurilossy.html';
         $fileexpected = __DIR__ . '/expected/autodataurilossy.html';
 
-        file_put_contents($fileresult, $result);
+        $expected = file_get_contents($fileexpected);
+        
+        $percent = 0;
+        similar_text($result, $expected, $percent);
 
-
-        $this->assertFileEquals($fileexpected, $fileresult);
+        $this->assertGreaterThan(95,$percent);        
     }
     
 
