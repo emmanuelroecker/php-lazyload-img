@@ -53,7 +53,6 @@ class GlLazyLoadImgTest extends \PHPUnit_Framework_TestCase
         similar_text($expected, $datauri, $percent);
         
         $this->assertGreaterThan(95, $percent);
-        $this->assertEquals($expected, $datauri);
     }
     
 
