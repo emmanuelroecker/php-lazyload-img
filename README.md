@@ -6,15 +6,14 @@
 [![SensioLabsInsight](https://insight.sensiolabs.com/projects/edf81a87-96e7-4620-b4e0-47d75c02b71d/mini.png)](https://insight.sensiolabs.com/projects/edf81a87-96e7-4620-b4e0-47d75c02b71d)
 [![Dependency Status](https://www.versioneye.com/user/projects/57cd80ba968d640033602aa5/badge.svg?style=flat-square)](https://www.versioneye.com/user/projects/57cd80ba968d640033602aa5)
 
-Lazy loading images with data:uri
+Autoset html tags/attributes to lazy loading lossless/lossy images
 
 ## Server side with PHP
 
 ### Using a blank image and set width/height
 
 * Add 1x1 gif blank image in data:uri attribute to all <img> tags in html
-* Set width and height attributes with original image size
-* Browser is going to rescale automatically with width/height attribute
+* Set width and height attributes with original image size (Browser is going to rescale automatically with width/height attribute)
 
 ```php
 $html = '<!DOCTYPE html><html><head></head><body><div><img src="img/test1.jpg"></div></body></html>';
@@ -42,8 +41,7 @@ $result contain :
 ### Using a lossy image and set width/height
 
 * Add reduced gif image in data:uri attribute to all <img> tags in html
-* Set width and height attributes with original image size
-* Browser is going to rescale automatically with width/height attribute
+* Set width and height attributes with original image size (Browser is going to rescale automatically with width/height attribute)
 
 ```php
 $html = '<!DOCTYPE html><html><head></head><body><div><img src="img/test1.jpg"></div></body></html>';

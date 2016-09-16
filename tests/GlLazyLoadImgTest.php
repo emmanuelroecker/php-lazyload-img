@@ -19,7 +19,6 @@
 namespace GlLazyLoadImg\Tests;
 
 use GlLazyLoadImg\GlLazyLoadImg;
-use Symfony\Component\Finder\Finder;
 
 /**
  * @covers        \GlLazyLoadImg\GlLazyLoadImg
