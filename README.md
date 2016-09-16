@@ -6,7 +6,7 @@
 [![SensioLabsInsight](https://insight.sensiolabs.com/projects/edf81a87-96e7-4620-b4e0-47d75c02b71d/mini.png)](https://insight.sensiolabs.com/projects/edf81a87-96e7-4620-b4e0-47d75c02b71d)
 [![Dependency Status](https://www.versioneye.com/user/projects/57cd80ba968d640033602aa5/badge.svg?style=flat-square)](https://www.versioneye.com/user/projects/57cd80ba968d640033602aa5)
 
-Autoset html tags/attributes to lazy loading lossless/lossy images
+Autoset html tags/attributes to lazy loading lossless/lossy images (gif, png, jpeg)
 
 ## Server side with PHP
 
